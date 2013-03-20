@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  GamePlayViewController.h
 //  knockONwood
 //
 //  Created by Jennifer Clark on 2/11/13.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+@interface GamePlayViewController : UIViewController
 
 @end

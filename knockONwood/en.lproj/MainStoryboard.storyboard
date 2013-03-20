@@ -1,23 +1,222 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2519" systemVersion="12A206j" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12C60" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="Wp3-aQ-U2Q">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1856"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
     </dependencies>
     <scenes>
-        <!--class Prefix:identifier View Controller-->
+        <!--Start Game View Controller-->
+        <scene sceneID="MGt-TT-7Q1">
+            <objects>
+                <viewController id="czI-UH-jgT" customClass="StartGameViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="aay-XC-wHo">
+                        <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="startScreen.png" id="cJu-Cd-C4T">
+                                <rect key="frame" x="0.0" y="0.0" width="1024" height="724"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="qcb-O0-4l7">
+                                <rect key="frame" x="284" y="473" width="503" height="116"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="startButton" destination="czI-UH-jgT" eventType="touchUpInside" id="HAF-A3-NFj"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="gOQ-Xf-2kH"/>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <connections>
+                        <segue destination="2" kind="push" identifier="playGame" id="B88-SM-yl1"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Y7u-AS-tWn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-410" y="-187"/>
+        </scene>
+        <!--Game Play View Controller-->
         <scene sceneID="4">
             <objects>
-                <viewController id="2" customClass="ViewController" sceneMemberID="viewController">
+                <viewController id="2" customClass="GamePlayViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5">
-                        <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
+                        <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" id="4XV-8Y-Ytj" userLabel="View - main background">
+                                <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <imageView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" image="mainBackground.png" id="Q7r-92-UP1">
+                                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="cXv-DE-2bJ" userLabel="Button pause">
+                                        <rect key="frame" x="424" y="396" width="225" height="60"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" image="pauseButton.png">
+                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="pauseButton:" destination="2" eventType="touchUpInside" id="zUb-XB-aYJ"/>
+                                        </connections>
+                                    </button>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="bottomRightSign.png" id="9HG-zb-tBy">
+                                        <rect key="frame" x="600" y="650" width="420" height="95"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="bottomLeftSign.png" id="Mwl-gd-AOr">
+                                        <rect key="frame" x="10" y="700" width="220" height="35"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <view contentMode="scaleToFill" id="NIQ-wk-rr8" userLabel="View - paused View">
+                                        <rect key="frame" x="256" y="192" width="512" height="384"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="yqS-t4-pdj">
+                                                <rect key="frame" x="85" y="138" width="343" height="109"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="40"/>
+                                                <state key="normal" title="RESUME GAME">
+                                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <state key="highlighted">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="resumeButton:" destination="2" eventType="touchUpInside" id="2KF-Zp-Vha"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="HhR-Fs-6d8" userLabel="Button - new game">
+                                        <rect key="frame" x="420" y="475" width="183" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                        <state key="normal">
+                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="playAgainButton:" destination="2" eventType="touchUpInside" id="pnr-MJ-RGX"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </view>
+                            <view opaque="NO" contentMode="scaleToFill" id="xmm-pR-96q" userLabel="View - tree top">
+                                <rect key="frame" x="0.0" y="0.0" width="1024" height="280"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <imageView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" image="treeTop.png" id="62M-Va-qFq">
+                                        <rect key="frame" x="0.0" y="0.0" width="1104" height="267"/>
+                                    </imageView>
+                                </subviews>
+                            </view>
+                            <view autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" id="eJj-qb-UE4" userLabel="View - score sign">
+                                <rect key="frame" x="795" y="306" width="120" height="206"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="numberOfBoardsCollected.png" id="elt-Ms-fx7">
+                                        <rect key="frame" x="0.0" y="0.0" width="120" height="206"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    </imageView>
+                                </subviews>
+                            </view>
+                            <view opaque="NO" contentMode="scaleToFill" id="bDo-zj-LYc" userLabel="View - player">
+                                <rect key="frame" x="250" y="450" width="125" height="175"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="arm.png" id="IYz-Ne-HXQ">
+                                        <rect key="frame" x="20" y="-2" width="115" height="180"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                    <imageView contentMode="scaleToFill" image="runSequence1.png" id="PQU-gx-fEE" userLabel="Image View - body">
+                                        <rect key="frame" x="1" y="7" width="125" height="170"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                </subviews>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="Yn4-P1-Np2" appends="YES" id="cQ9-0x-hCo"/>
+                                </connections>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
+                    <navigationItem key="navigationItem" id="oN1-li-acr"/>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <connections>
+                        <outlet property="mainBackgroundView" destination="4XV-8Y-Ytj" id="dOB-ex-10O"/>
+                        <outlet property="pauseButton" destination="cXv-DE-2bJ" id="sfQ-jM-8Qg"/>
+                        <outlet property="pauseView" destination="NIQ-wk-rr8" id="noi-jP-3qJ"/>
+                        <outlet property="playAgainButton" destination="HhR-Fs-6d8" id="hob-8e-2wJ"/>
+                        <outlet property="playerArm" destination="IYz-Ne-HXQ" id="ybF-Ec-7Fk"/>
+                        <outlet property="playerBody" destination="PQU-gx-fEE" id="xMY-u9-0Pn"/>
+                        <outlet property="playerView" destination="bDo-zj-LYc" id="WXR-k8-d62"/>
+                        <outlet property="scoreBoard" destination="elt-Ms-fx7" id="Tyc-1K-fSM"/>
+                        <outlet property="scoreSignView" destination="eJj-qb-UE4" id="JuB-1N-hHh"/>
+                        <outlet property="treeTopView" destination="62M-Va-qFq" id="NTQ-8g-CzF"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="Yn4-P1-Np2">
+                    <connections>
+                        <action selector="handlePan:" destination="2" id="ZNc-YW-TED"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
+            <point key="canvasLocation" x="742" y="-187"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="dt7-qx-Dgv">
+            <objects>
+                <navigationController id="Wp3-aQ-U2Q" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Ph7-CV-dYn">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="czI-UH-jgT" kind="relationship" relationship="rootViewController" id="roB-J7-ujL"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1fU-1t-nLd" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1384" y="-187"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="arm.png" width="240" height="285"/>
+        <image name="bottomLeftSign.png" width="220" height="35"/>
+        <image name="bottomRightSign.png" width="420" height="95"/>
+        <image name="mainBackground.png" width="1004" height="768"/>
+        <image name="numberOfBoardsCollected.png" width="120" height="206"/>
+        <image name="pauseButton.png" width="225" height="60"/>
+        <image name="runSequence1.png" width="240" height="285"/>
+        <image name="startScreen.png" width="1004" height="768"/>
+        <image name="treeTop.png" width="1004" height="269"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>
