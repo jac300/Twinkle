@@ -12,15 +12,15 @@
                         <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="startScreen.png" id="cJu-Cd-C4T">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="startScreenStar.png" id="cJu-Cd-C4T">
                                 <rect key="frame" x="0.0" y="0.0" width="1024" height="724"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="qcb-O0-4l7">
-                                <rect key="frame" x="284" y="473" width="503" height="116"/>
+                                <rect key="frame" x="257" y="529" width="510" height="125"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal">
+                                <state key="normal" image="beginButton.png">
                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -50,22 +50,47 @@
             <objects>
                 <viewController id="2" customClass="GamePlayViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5">
-                        <rect key="frame" x="0.0" y="64" width="1024" height="704"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" id="4XV-8Y-Ytj" userLabel="View - main background">
                                 <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <imageView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" image="mainBackground.png" id="Q7r-92-UP1">
+                                    <imageView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" image="BG.png" id="Q7r-92-UP1">
                                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
+                                    <view contentMode="scaleToFill" id="NIQ-wk-rr8" userLabel="View - paused View">
+                                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="pauseScreen.png" id="SnZ-LS-cZB">
+                                                <rect key="frame" x="-122" y="-46" width="1146" height="814"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            </imageView>
+                                        </subviews>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="yqS-t4-pdj">
+                                        <rect key="frame" x="55" y="649" width="79" height="77"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="40"/>
+                                        <state key="normal" image="resumePlayButton.png">
+                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="resumeButton:" destination="2" eventType="touchUpInside" id="2KF-Zp-Vha"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="cXv-DE-2bJ" userLabel="Button pause">
-                                        <rect key="frame" x="424" y="396" width="225" height="60"/>
+                                        <rect key="frame" x="55" y="650" width="78" height="76"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                        <state key="normal" image="pauseButton.png">
+                                        <state key="normal" image="pausebutton.png">
                                             <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -76,80 +101,17 @@
                                             <action selector="pauseButton:" destination="2" eventType="touchUpInside" id="zUb-XB-aYJ"/>
                                         </connections>
                                     </button>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="bottomRightSign.png" id="9HG-zb-tBy">
-                                        <rect key="frame" x="600" y="650" width="420" height="95"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </imageView>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="bottomLeftSign.png" id="Mwl-gd-AOr">
-                                        <rect key="frame" x="10" y="700" width="220" height="35"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </imageView>
-                                    <view contentMode="scaleToFill" id="NIQ-wk-rr8" userLabel="View - paused View">
-                                        <rect key="frame" x="256" y="192" width="512" height="384"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="yqS-t4-pdj">
-                                                <rect key="frame" x="85" y="138" width="343" height="109"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="40"/>
-                                                <state key="normal" title="RESUME GAME">
-                                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                </state>
-                                                <state key="highlighted">
-                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="resumeButton:" destination="2" eventType="touchUpInside" id="2KF-Zp-Vha"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                    </view>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="HhR-Fs-6d8" userLabel="Button - new game">
-                                        <rect key="frame" x="420" y="475" width="183" height="44"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                        <state key="normal">
-                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <state key="highlighted">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="playAgainButton:" destination="2" eventType="touchUpInside" id="pnr-MJ-RGX"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                            </view>
-                            <view opaque="NO" contentMode="scaleToFill" id="xmm-pR-96q" userLabel="View - tree top">
-                                <rect key="frame" x="0.0" y="0.0" width="1024" height="280"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <imageView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" image="treeTop.png" id="62M-Va-qFq">
-                                        <rect key="frame" x="0.0" y="0.0" width="1104" height="267"/>
-                                    </imageView>
-                                </subviews>
-                            </view>
-                            <view autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" id="eJj-qb-UE4" userLabel="View - score sign">
-                                <rect key="frame" x="795" y="306" width="120" height="206"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                                <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="numberOfBoardsCollected.png" id="elt-Ms-fx7">
-                                        <rect key="frame" x="0.0" y="0.0" width="120" height="206"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    </imageView>
                                 </subviews>
                             </view>
                             <view opaque="NO" contentMode="scaleToFill" id="bDo-zj-LYc" userLabel="View - player">
                                 <rect key="frame" x="250" y="450" width="125" height="175"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="arm.png" id="IYz-Ne-HXQ">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="insidearm5.png" id="IYz-Ne-HXQ">
                                         <rect key="frame" x="20" y="-2" width="115" height="180"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
-                                    <imageView contentMode="scaleToFill" image="runSequence1.png" id="PQU-gx-fEE" userLabel="Image View - body">
+                                    <imageView contentMode="scaleToFill" image="walk1.png" id="PQU-gx-fEE" userLabel="Image View - body">
                                         <rect key="frame" x="1" y="7" width="125" height="170"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
@@ -158,24 +120,35 @@
                                     <outletCollection property="gestureRecognizers" destination="Yn4-P1-Np2" appends="YES" id="cQ9-0x-hCo"/>
                                 </connections>
                             </view>
+                            <view autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" id="eJj-qb-UE4" userLabel="View - score sign">
+                                <rect key="frame" x="750" y="470" width="275" height="320"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="frogScore.png" id="elt-Ms-fx7">
+                                        <rect key="frame" x="0.0" y="18" width="275" height="285"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    </imageView>
+                                </subviews>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
                     <navigationItem key="navigationItem" id="oN1-li-acr"/>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
                         <outlet property="mainBackgroundView" destination="4XV-8Y-Ytj" id="dOB-ex-10O"/>
                         <outlet property="pauseButton" destination="cXv-DE-2bJ" id="sfQ-jM-8Qg"/>
                         <outlet property="pauseView" destination="NIQ-wk-rr8" id="noi-jP-3qJ"/>
-                        <outlet property="playAgainButton" destination="HhR-Fs-6d8" id="hob-8e-2wJ"/>
                         <outlet property="playerArm" destination="IYz-Ne-HXQ" id="ybF-Ec-7Fk"/>
                         <outlet property="playerBody" destination="PQU-gx-fEE" id="xMY-u9-0Pn"/>
                         <outlet property="playerView" destination="bDo-zj-LYc" id="WXR-k8-d62"/>
+                        <outlet property="resumeButton" destination="yqS-t4-pdj" id="VN8-bq-m4j"/>
                         <outlet property="scoreBoard" destination="elt-Ms-fx7" id="Tyc-1K-fSM"/>
                         <outlet property="scoreSignView" destination="eJj-qb-UE4" id="JuB-1N-hHh"/>
-                        <outlet property="treeTopView" destination="62M-Va-qFq" id="NTQ-8g-CzF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3" sceneMemberID="firstResponder"/>
@@ -207,15 +180,15 @@
         </scene>
     </scenes>
     <resources>
-        <image name="arm.png" width="240" height="285"/>
-        <image name="bottomLeftSign.png" width="220" height="35"/>
-        <image name="bottomRightSign.png" width="420" height="95"/>
-        <image name="mainBackground.png" width="1004" height="768"/>
-        <image name="numberOfBoardsCollected.png" width="120" height="206"/>
-        <image name="pauseButton.png" width="225" height="60"/>
-        <image name="runSequence1.png" width="240" height="285"/>
-        <image name="startScreen.png" width="1004" height="768"/>
-        <image name="treeTop.png" width="1004" height="269"/>
+        <image name="BG.png" width="2048" height="1536"/>
+        <image name="beginButton.png" width="510" height="125"/>
+        <image name="frogScore.png" width="275" height="285"/>
+        <image name="insidearm5.png" width="240" height="285"/>
+        <image name="pauseScreen.png" width="1004" height="768"/>
+        <image name="pausebutton.png" width="78" height="76"/>
+        <image name="resumePlayButton.png" width="79" height="77"/>
+        <image name="startScreenStar.png" width="1024" height="768"/>
+        <image name="walk1.png" width="226" height="306"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>

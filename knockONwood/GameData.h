@@ -12,7 +12,6 @@
 
 #define MAX_LEVEL 10
 
--(BOOL)checkIfLevelFailed:(int)missedBoards;
 -(BOOL)checkIfLevelWon:(int)boardsCollected forLevel:(int)level;
 
 -(int)determineNextGameLevel:(BOOL)levelPassed currentGameLevel:(int)level;

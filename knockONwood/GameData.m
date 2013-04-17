@@ -1,6 +1,5 @@
 //
 //  GameData.m
-//  knockONwood
 //
 //  Created by Jennifer Clark on 3/10/13.
 //  Copyright (c) 2013 Jennifer Clark. All rights reserved.
@@ -17,10 +16,6 @@
 
 @implementation GameData
 
--(BOOL)checkIfLevelFailed:(int)missedBoards
-{
-    return (missedBoards >= 3) ? YES : NO;
-}
 
 -(int)determineNextGameLevel:(BOOL)levelPassed currentGameLevel:(int)level
 {
@@ -37,7 +32,7 @@
 + (NSDictionary *)getBoardRequirementsForEachLevel
 {
     NSArray *levels = [[NSArray alloc]initWithObjects:@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9", @"10", nil];
-    NSArray *boardAmounts = [[NSArray alloc]initWithObjects:@"10",@"15",@"20",@"25",@"30",@"35",@"40",@"45",@"50",@"55",nil];
+    NSArray *boardAmounts = [[NSArray alloc]initWithObjects:@"5",@"5",@"5",@"5",@"5",@"5",@"5",@"5",@"5",@"5",nil];
     NSDictionary *boardsForEachLevel = [[NSDictionary alloc]initWithObjects:boardAmounts forKeys:levels];
     return boardsForEachLevel;
 }

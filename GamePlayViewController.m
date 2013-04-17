@@ -1,6 +1,5 @@
 //
 //  GamePlayViewController.m
-//  knockONwood
 //
 //  Created by Jennifer Clark on 2/11/13.
 //  Copyright (c) 2013 Jennifer Clark. All rights reserved.
@@ -10,13 +9,13 @@
 #import "GameData.h"
 #import <QuartzCore/QuartzCore.h>
 #import <CoreMotion/CoreMotion.h>
-#import "SkateBoardView.h"
+#import "StarView.h"
 #import "CMMotionManager+SharedInstance.h"
 #import "DataController.h"
 
-@interface GamePlayViewController () <SkateBoardAnimation>
+@interface GamePlayViewController () <StarAnimation>
 
-@property (strong, nonatomic) NSTimer *skateBoardDropTimer;
+@property (strong, nonatomic) NSTimer *starDropTimer;
 @property (strong, nonatomic) NSTimer *runTimer;
 
 @property (nonatomic) BOOL gameOver;
@@ -25,20 +24,19 @@
 @property (nonatomic) BOOL stopRunTimerWasCalled;
 @property (nonatomic) BOOL accelerometerIsNotAvailable;
 @property (nonatomic) BOOL difficultyLevelWasIncremented;
+@property (nonatomic) BOOL levelPassed;
 
 @property (strong, nonatomic) GameData *gameData;
-@property (strong, nonatomic) SkateBoardView *skateboardView;
+@property (strong, nonatomic) StarView *starView;
 
-@property (strong, nonatomic) NSArray *skateBoardImages;
-@property (strong, nonatomic) NSArray *skateBoardsToPause;
+@property (strong, nonatomic) NSArray *starImages;
 @property (strong, nonatomic) NSMutableArray *runSequenceLeftToRight;
-@property (strong, nonatomic) NSMutableArray *skateBoardsInPlayerArms;
+@property (strong, nonatomic) NSMutableArray *starsInPlayerArms;
 @property (strong, nonatomic) NSMutableArray *viewsToBeReAnimated;
 
-@property (strong, nonatomic) NSDictionary *rateOfSkateBoardDropPerLevel;
-@property (strong, nonatomic) NSDictionary *rateOfSkateBoardCreationPerLevel;
+@property (strong, nonatomic) NSDictionary *rateOfStarDropPerLevel;
+@property (strong, nonatomic) NSDictionary *rateOfStarCreationPerLevel;
 
-@property (weak, nonatomic) IBOutlet UIImageView *treeTopView;
 @property (weak, nonatomic) IBOutlet UIImageView *playerBody;
 @property (weak, nonatomic) IBOutlet UIImageView *playerArm;
 @property (weak, nonatomic) IBOutlet UIImageView *scoreBoard;
@@ -49,23 +47,31 @@
 @property (weak, nonatomic) IBOutlet UIView *pauseView;
 
 @property (weak, nonatomic) IBOutlet UIButton *pauseButton;
-@property (weak, nonatomic) IBOutlet UIButton *playAgainButton;
+@property (weak, nonatomic) IBOutlet UIButton *resumeButton;
+@property (strong, nonatomic) UIButton *tryAgainButton;
+@property (strong, nonatomic) UIButton *continueButton;
+@property (strong, nonatomic) UIButton *playAgainFromBeginningButton;
 
 @property (strong, nonatomic) UIImageView *centerView;
 @property (strong, nonatomic) UIImageView *leftView;
 @property (strong, nonatomic) UIImageView *rightView;
-@property (strong, nonatomic) UIImageView *currentSkateboardView;
 
-@property (weak, nonatomic) UILabel *missedBoardsLabel;
+@property (strong, nonatomic) UIImageView *leftViewForMissedStar;
+@property (strong, nonatomic) UIImageView *centerViewForMissedStar;
+@property (strong, nonatomic) UIImageView *rightViewForMissedStar;
+
+@property (strong, nonatomic) UIView *youLostView;
+@property (strong, nonatomic) UIView *nextLevelView;
+@property (strong, nonatomic) UIView *wonEntireGameView;
+
 @property (weak, nonatomic) UILabel *gameLevelLabel;
 
 @property (nonatomic) int runSequenceCounter;
-@property (nonatomic) int collectedBoards;
-@property (nonatomic) int missedBoards;
+@property (nonatomic) int collectedStars;
+@property (nonatomic) int missedStars;
 @property (nonatomic) int currentLevel;
-@property (nonatomic) float lastXCoordinateChosen;
 @property (nonatomic) float animationDistance;
-@property (nonatomic) float skateboardCreationRate;
+@property (nonatomic) float starCreationRate;
 
 @end
 
@@ -80,20 +86,20 @@
 
 -(int)missedBoards
 {
-    if (!_missedBoards) _missedBoards = 0;
-    return _missedBoards;
+    if (!_missedStars) _missedStars = 0;
+    return _missedStars;
 }
 
--(int)collectedBoards
+-(int)collectedStars
 {
-    if (!_collectedBoards)  _collectedBoards = 0;
-    return _collectedBoards;
+    if (!_collectedStars)  _collectedStars = 0;
+    return _collectedStars;
 }
 
-- (NSMutableArray *)skateBoardsInPlayerArms
+- (NSMutableArray *)starsInPlayerArms
 {
-    if (!_skateBoardsInPlayerArms)  _skateBoardsInPlayerArms = [[NSMutableArray alloc]init];
-    return _skateBoardsInPlayerArms;
+    if (!_starsInPlayerArms)  _starsInPlayerArms = [[NSMutableArray alloc]init];
+    return _starsInPlayerArms;
 }
 
 -(int)currentLevel
@@ -110,18 +116,18 @@
 
 - (float)getRateOfSkateBoardCreationForCurrentLevel:(int)currentLevel
 {
-    return [[self.rateOfSkateBoardCreationPerLevel objectForKey:[NSString stringWithFormat:@"%i", currentLevel]] floatValue];
+    return [[self.rateOfStarCreationPerLevel objectForKey:[NSString stringWithFormat:@"%i", currentLevel]] floatValue];
 }
 
 - (float)getRateOfSkateBoardFallForCurrentLevel:(int)currentLevel
 {
-    return [[self.rateOfSkateBoardDropPerLevel objectForKey:[NSString stringWithFormat:@"%i", currentLevel]] floatValue];
+    return [[self.rateOfStarDropPerLevel objectForKey:[NSString stringWithFormat:@"%i", currentLevel]] floatValue];
 }
 
 #pragma mark - create labels
 
-#define GameLevelLabel_x 30
-#define GameLevelLabel_y 275
+#define GameLevelLabel_x 840
+#define GameLevelLabel_y 605
 #define GameLevelLabel_width 350
 #define GameLevelLabel_Height 64
 
@@ -130,28 +136,120 @@
     CGRect frame = CGRectMake(GameLevelLabel_x, GameLevelLabel_y, GameLevelLabel_width, GameLevelLabel_Height); 
     UILabel *label = [[UILabel alloc]initWithFrame:frame];
     [label setBackgroundColor:[UIColor clearColor]];
+    label.textColor = [UIColor whiteColor];
     label.text = gameLevel;
     return label;
 }
 
-#define MissedBoardLabel_x 30
-#define MissedBoardLabel_y 300
-#define MissedBoardLabel_width 350
-#define MissedBoardLabel_Height 64
-
--(UILabel *)createMissedBoardsLabel
+-(void)createMissedStarsViews
 {
-    CGRect frame = CGRectMake(MissedBoardLabel_x, MissedBoardLabel_y, MissedBoardLabel_width, MissedBoardLabel_Height);
-    UILabel *label = [[UILabel alloc]initWithFrame:frame];
-    [label setBackgroundColor:[UIColor clearColor]];
-    return label;
+    CGFloat y = 660;
+    CGFloat x = 390;
+    
+    UIImage *image = [UIImage imageNamed:@"missedStar"];
+    CGRect leftFrame = CGRectMake(x, y, image.size.width, image.size.height);
+    CGRect centerFrame = CGRectMake(x + 10 + image.size.width, y, image.size.width, image.size.height);
+    CGRect rightFrame = CGRectMake(x + 20 + 2*image.size.width, y, image.size.width, image.size.height);
+
+    self.leftViewForMissedStar = [[UIImageView alloc]initWithFrame:leftFrame];
+    self.centerViewForMissedStar = [[UIImageView alloc]initWithFrame:centerFrame];
+    self.rightViewForMissedStar = [[UIImageView alloc]initWithFrame:rightFrame];
+
+    [self.view addSubview:self.leftViewForMissedStar];
+    [self.view addSubview:self.centerViewForMissedStar];
+    [self.view addSubview:self.rightViewForMissedStar];
 }
+
+
+-(UIButton *)createTryAgainButton
+{
+    UIImage *buttonImage = [UIImage imageNamed:@"tryAgainButton"];
+    
+    CGFloat x = self.view.frame.size.width/2 - buttonImage.size.width/2;
+    CGFloat y = self.view.frame.size.height *2/3;
+    CGRect buttonFrame = CGRectMake(x, y, buttonImage.size.width, buttonImage.size.height);
+    UIButton *tryAgainButton = [[UIButton alloc]initWithFrame:buttonFrame];
+    [tryAgainButton setImage:buttonImage forState:UIControlStateNormal];
+    [tryAgainButton addTarget:self action:@selector(playAgainButton:) forControlEvents:UIControlEventTouchUpInside];
+    
+    return tryAgainButton;
+}
+
+-(UIButton *)createContinueButton
+{
+    UIImage *buttonImage = [UIImage imageNamed:@"continueButton"];
+    
+    CGFloat x = self.view.frame.size.width/2 - buttonImage.size.width/2;
+    CGFloat y = self.view.frame.size.height *2/3;
+    CGRect buttonFrame = CGRectMake(x, y, buttonImage.size.width, buttonImage.size.height);
+    UIButton *continueButton = [[UIButton alloc]initWithFrame:buttonFrame];
+    [continueButton setImage:buttonImage forState:UIControlStateNormal];
+    [continueButton addTarget:self action:@selector(playAgainButton:) forControlEvents:UIControlEventTouchUpInside];
+    
+    return continueButton;
+}
+
+-(UIButton *)createPlayAgainButton
+{
+    UIImage *buttonImage = [UIImage imageNamed:@"playAgainButton"];
+    
+    CGFloat x = self.view.frame.size.width/2 - buttonImage.size.width/2;
+    CGFloat y = self.view.frame.size.height *2/3;
+    CGRect buttonFrame = CGRectMake(x, y, buttonImage.size.width, buttonImage.size.height);
+    UIButton *playAgainButton = [[UIButton alloc]initWithFrame:buttonFrame];
+    [playAgainButton setImage:buttonImage forState:UIControlStateNormal];
+    [playAgainButton addTarget:self action:@selector(playAgainButton:) forControlEvents:UIControlEventTouchUpInside];
+    
+    return playAgainButton;
+}
+
+
+-(UIView *)createYouLostView
+{
+    UIView *youLostView = [[UIView alloc]initWithFrame:self.view.frame];
+    
+    UIImage *lostImage = [UIImage imageNamed:@"youLostView"];
+    UIImageView *imageView = [[UIImageView alloc]initWithImage:lostImage];
+    imageView.center = self.view.center;
+    
+    [youLostView addSubview:imageView];    
+    
+    return youLostView;
+}
+
+-(UIView *)createNextLevelView
+{
+    UIView *nextLevelView = [[UIView alloc]initWithFrame:self.view.frame];
+    UIImage *nextLevelImage = [UIImage imageNamed:@"nextLevelView"];
+    UIImageView *imageView = [[UIImageView alloc]initWithImage:nextLevelImage];
+    imageView.center = self.view.center;
+    
+    [nextLevelView addSubview:imageView];
+    
+    //ADD IN STAR LABEL TO SHOW THE CURRENT LEVEL
+    
+    return nextLevelView;
+}
+
+
+-(UIView *)createWonEntireGameView
+{
+    UIView *wonEntireGameView = [[UIView alloc]initWithFrame:self.view.frame];
+    UIImage *wonEntireGameImage = [UIImage imageNamed:@"wonEntireGame"];
+    UIImageView *imageView = [[UIImageView alloc]initWithImage:wonEntireGameImage];
+    imageView.center = self.view.center;
+    
+    [wonEntireGameView addSubview:imageView];
+        
+    return wonEntireGameView;
+}
+
 
 #pragma mark - run sequence
 - (void)prepareRunSequenceArrays
 {
     self.runSequenceLeftToRight = [[NSMutableArray alloc]init];
-    NSString *imageTitle = @"runSequence";
+    NSString *imageTitle = @"walk";
     int i;
     for (i = 1; i < 10; i++) { //there are 9 run sequence images
         NSString *newTitle = [NSString stringWithFormat:@"%@%i", imageTitle, i];
@@ -170,7 +268,7 @@
 
 - (void)startRunTimer
 {
-    self.runTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
+    self.runTimer = [NSTimer scheduledTimerWithTimeInterval:0.03
                                                          target:self
                                                        selector:@selector(startRunSequence:)
                                                        userInfo:nil
@@ -196,11 +294,11 @@
 {
     NSMutableArray *newViews = [[NSMutableArray alloc]init];
     
-    for (SkateBoardView *view in viewArray) {
+    for (StarView *view in viewArray) {
         float newXPosition = view.lastKnownLocation.x;
         float newYPosition = view.lastKnownLocation.y;
         CGPoint newCenter = CGPointMake(newXPosition, newYPosition);
-        SkateBoardView *newView = [[SkateBoardView alloc]initWithImage:[self.skateBoardImages objectAtIndex:view.imageIndexIdentifier]];
+        StarView *newView = [[StarView alloc]initWithImage:[self.starImages objectAtIndex:view.imageIndexIdentifier]];
         newView.center = newCenter;
         newView.rotationAngleIsNegative = view.rotationAngleIsNegative;
         newView.imageIndexIdentifier = view.imageIndexIdentifier;
@@ -215,48 +313,66 @@
     return newViews; 
 }
 
-- (void)updateMissedBoardsLabel
+- (void)updateMissedStarsView
 {
-    NSString *strike = @"X";
-    NSString *doubleStrike = [strike stringByAppendingString:@"X"];
-    NSString *tripleStrike = [doubleStrike stringByAppendingString:@"X"];
-    self.gameOver = [self.gameData checkIfLevelFailed:self.missedBoards];
+    UIImage *image = [UIImage imageNamed:@"missedStar"];
     
-    if (self.gameOver) {
-         self.missedBoardsLabel.text = @"GAME OVER!";
-         [self gameEnded];
-    }   else if (self.missedBoards == 1) {
-        self.missedBoardsLabel.text = strike;
-        }   else if (self.missedBoards == 2) {
-            self.missedBoardsLabel.text = doubleStrike;
-            }   else if (self.missedBoards == 3) {
-                self.missedBoardsLabel.text = tripleStrike;
-                }
+   if (self.missedBoards == 1) {
+        self.leftViewForMissedStar.image = image;
+    }   else if (self.missedBoards == 2) {
+            self.centerViewForMissedStar.image = image;
+        }   else if (self.missedBoards == 3) {
+            NSLog(@"FROM UPDATE MISSED STARS: GAME LOST");
+                self.rightViewForMissedStar.image = image;
+                self.gameOver = YES;
+                self.levelPassed = NO;
+                [self gameEnded];
+            }   
 
+}
+
+- (void)prepareSceneWhenGameEnds {
+    if (!self.levelPassed) {
+        self.youLostView = [self createYouLostView];
+        [self.view addSubview:self.youLostView];
+        self.tryAgainButton = [self createTryAgainButton];
+        [self.view addSubview:self.tryAgainButton];
+        NSLog(@"FROM GAME ENDED: LEVEL LOST");
+    } else if (self.levelPassed && !self.startAllOver) {
+        self.nextLevelView = [self createNextLevelView];
+        [self.view addSubview:self.nextLevelView];
+        self.continueButton = [self createContinueButton];
+        [self.view addSubview:self.continueButton];
+        NSLog(@"FROM GAME ENDED: LEVEL PASSED");
+    }  else if (self.startAllOver) {
+        NSLog(@"FROM GAME ENDED: START ALL OVER");
+        self.wonEntireGameView = [self createWonEntireGameView];
+        [self.view addSubview:self.self.wonEntireGameView];
+        self.playAgainFromBeginningButton = [self createPlayAgainButton];
+        [self.view addSubview:self.playAgainFromBeginningButton];
+    }
 }
 
 - (void)gameEnded
 {
-    [self.skateBoardDropTimer invalidate];
-    NSArray *currentAnimations = [self.skateboardView retrieveCurrentSkateBoardViews];
+    [self.starDropTimer invalidate];
+    NSArray *currentAnimations = [self.starView retrieveCurrentStarViews];
     for (UIImageView *view in currentAnimations) { 
         [view removeFromSuperview];
     }
      self.pauseButton.hidden = YES;
-     self.missedBoards = 0;
+     self.resumeButton.hidden = YES;
     
-    if (self.startAllOver) {
-        [self.playAgainButton setTitle:@"Start Over?" forState:UIControlStateNormal];
-    }
+     self.missedStars = 0;
     
-    self.playAgainButton.hidden = NO;
+    [self performSelector:@selector(prepareSceneWhenGameEnds) withObject:nil afterDelay:0.3];
 }
 
-- (UIImageView *)createScoreDigitView:(NSString *)scoreString characterIndex:(int)index xOffset:(float)x
+- (UIImageView *)createScoreDigitView:(NSString *)scoreString characterIndex:(int)index xOffset:(float)x yOffSet:(float)y
 {
     NSString *stringDigit = [NSString stringWithFormat:@"%c",[scoreString characterAtIndex:index]];
     UIImage *imageForDigit = [UIImage imageNamed:stringDigit];
-    CGRect imageViewFrame = CGRectMake(self.scoreBoard.frame.size.width - x, self.scoreBoard.frame.size.height - 174, imageForDigit.size.width, imageForDigit.size.height); 
+    CGRect imageViewFrame = CGRectMake(self.scoreBoard.frame.size.width - x, self.scoreBoard.frame.size.height - y, imageForDigit.size.width, imageForDigit.size.height);
     UIImageView *imageView = [[UIImageView alloc]initWithFrame:imageViewFrame];
     imageView.image = imageForDigit;
     return imageView;
@@ -264,6 +380,7 @@
 
 - (void)postCurrentScore:(int)currentScore
 {
+    currentScore = 99;
     NSString *scoreString = [NSString stringWithFormat:@"%i", currentScore];
     int scoreStringLength = [scoreString length];
     [self.leftView removeFromSuperview];
@@ -271,24 +388,24 @@
     [self.rightView removeFromSuperview];
 
     if (scoreStringLength == 1) {
-        self.centerView = [self createScoreDigitView:scoreString characterIndex:0 xOffset:70];
+        self.centerView = [self createScoreDigitView:scoreString characterIndex:0 xOffset:200 yOffSet:100];
         [self.scoreSignView addSubview:self.centerView];
     }   else if (scoreStringLength == 2) {
         //first digit
-         self.leftView = [self createScoreDigitView:scoreString characterIndex:0 xOffset:86];
+         self.leftView = [self createScoreDigitView:scoreString characterIndex:0 xOffset:205 yOffSet:90];
          [self.scoreSignView addSubview:self.leftView];
         //second digit
-        self.rightView = [self createScoreDigitView:scoreString characterIndex:1 xOffset:57];
+        self.rightView = [self createScoreDigitView:scoreString characterIndex:1 xOffset:190 yOffSet:100];
         [self.scoreSignView addSubview:self.rightView];
         }   else if (scoreStringLength == 3) {
             //first digit
-            self.leftView = [self createScoreDigitView:scoreString characterIndex:0 xOffset:100];
+            self.leftView = [self createScoreDigitView:scoreString characterIndex:0 xOffset:218 yOffSet:85];
             [self.scoreSignView addSubview:self.leftView];
             //second digit
-            self.centerView = [self createScoreDigitView:scoreString characterIndex:1 xOffset:72];
+            self.centerView = [self createScoreDigitView:scoreString characterIndex:1 xOffset:203 yOffSet:95];
             [self.scoreSignView addSubview:self.centerView];
             //third digit
-            self.rightView = [self createScoreDigitView:scoreString characterIndex:2 xOffset:44];
+            self.rightView = [self createScoreDigitView:scoreString characterIndex:2 xOffset:183 yOffSet:109];
             [self.scoreSignView addSubview:self.rightView];
             }
 }
@@ -298,55 +415,57 @@
     [[CMMotionManager sharedMotionManager] stopAccelerometerUpdates];
 }
 
-#pragma mark - catch board
-- (void)catchBoard //creates illusion that boards are piling up in player's arms
+#pragma mark - catch star
+- (void)catchStar //creates illusion that stars are piling up in player's arms
 {
-    NSArray *skateBoards = [self.skateBoardImages copy];
-    int randomIndex = arc4random() % [skateBoards count];
+    NSArray *stars = [self.starImages copy];
+    int randomIndex = arc4random() % [stars count];
     
-    UIImage *skateBoard = [skateBoards objectAtIndex:randomIndex];
-    UIImageView *view = [[UIImageView alloc]initWithImage:skateBoard];
+    UIImage *star = [stars objectAtIndex:randomIndex];
+    UIImageView *view = [[UIImageView alloc]initWithImage:star];
    
-    float originOffset = skateBoard.size.height;
-    if (self.collectedBoards > 5 && self.collectedBoards < 10) originOffset -= 10;
-    if (self.collectedBoards > 10 && self.collectedBoards < 15) originOffset -= 20;
-    if (self.collectedBoards > 15 && self.collectedBoards < 20) originOffset -= 30;
-    if (self.collectedBoards > 20 && self.collectedBoards < 25) originOffset -= 40;
-    if (self.collectedBoards > 25 && self.collectedBoards < 30) originOffset -= 50;
-    if (self.collectedBoards > 30 && self.collectedBoards < 35) originOffset -= 60;
-    if (self.collectedBoards > 35 && self.collectedBoards < 40) originOffset -= 70;
-    if (self.collectedBoards > 40 && self.collectedBoards < 45) originOffset -= 80;
-    if (self.collectedBoards > 45 && self.collectedBoards < 50) originOffset -= 90;
-    if (self.collectedBoards > 50) originOffset -= 100;
+    float originOffset = star.size.height;
+    if (self.collectedStars > 5 && self.collectedStars < 10) originOffset -= 10;
+    if (self.collectedStars > 10 && self.collectedStars < 15) originOffset -= 20;
+    if (self.collectedStars > 15 && self.collectedStars < 20) originOffset -= 30;
+    if (self.collectedStars > 20 && self.collectedStars < 25) originOffset -= 40;
+    if (self.collectedStars > 25 && self.collectedStars < 30) originOffset -= 50;
+    if (self.collectedStars > 30 && self.collectedStars < 35) originOffset -= 60;
+    if (self.collectedStars > 35 && self.collectedStars < 40) originOffset -= 70;
+    if (self.collectedStars > 40 && self.collectedStars < 45) originOffset -= 80;
+    if (self.collectedStars > 45 && self.collectedStars < 50) originOffset -= 90;
+    if (self.collectedStars > 50) originOffset -= 100;
 
-    float xPointForSkateBoard = self.playerArm.frame.origin.x + skateBoard.size.height;
-    float yPointForSkateBoard = self.playerArm.frame.origin.y + originOffset;
-    CGPoint newCenterForView = CGPointMake(xPointForSkateBoard, yPointForSkateBoard);
+    float xPointForStar = self.playerArm.frame.origin.x + star.size.width*2;
+    float yPointForStar = self.playerArm.frame.origin.y + 10 + originOffset;
+    CGPoint newCenterForView = CGPointMake(xPointForStar, yPointForStar);
     view.center = newCenterForView;
 
     [self.playerView addSubview:view];
     [self.playerView sendSubviewToBack:view];
     [self.playerView sendSubviewToBack:self.playerArm];
     
-    self.collectedBoards++;
-    [self postCurrentScore:self.collectedBoards];
+    self.collectedStars++;
+    [self postCurrentScore:self.collectedStars];
     
-    if([self.gameData checkIfLevelWon:self.collectedBoards forLevel:self.currentLevel]) {
-        if (self.currentLevel == MAX_LEVEL) {
-            self.missedBoardsLabel.text = @"YOU WON THE WHOLE GAME!!!!!!!!!";
+    if([self.gameData checkIfLevelWon:self.collectedStars forLevel:self.currentLevel]) {
+        if (self.currentLevel == MAX_LEVEL) { ////RESART WHOLE GAME
             self.startAllOver = YES;
-        } else  self.missedBoardsLabel.text = @"YOU WON!";
+        } else  { //GO TO NEXT LEVEL
+            self.levelPassed = YES;
+        }
         
         [self gameEnded];
-    }
+        NSLog(@"FROM CATCH STAR METHOD: LEVEL WON");
+    } 
     
-    [self.skateBoardsInPlayerArms addObject:view];
+    [self.starsInPlayerArms addObject:view];
 }
 
 #pragma mark - player motion gesture recognizer
 - (IBAction)handlePan:(UIPanGestureRecognizer *)recognizer { 
     
-    if (!self.accelerometerIsNotAvailable) recognizer.enabled = NO; //only available if there is no acceleromter
+    if (!self.accelerometerIsNotAvailable) recognizer.enabled = NO; //gesture only available if there is no acceleromter
     
     CGPoint translation = [recognizer translationInView:self.view];
     
@@ -414,98 +533,66 @@
 
 - (void)incrementBoardDropRateAtEndOfLevel
 {
-    float skateboardCreationIncrementor = 0.1;
+    float starCreationIncrementor = 0.1;
     
-    if (self.collectedBoards < [self.gameData getBoardRequirementForCurrentLevel:self.currentLevel]/2) {
-        self.skateboardCreationRate = [self getRateOfSkateBoardCreationForCurrentLevel:self.currentLevel];
+    if (self.collectedStars < [self.gameData getBoardRequirementForCurrentLevel:self.currentLevel]/2) {
+        self.starCreationRate = [self getRateOfSkateBoardCreationForCurrentLevel:self.currentLevel];
     }
     
-    if ((self.collectedBoards > [self.gameData getBoardRequirementForCurrentLevel:self.currentLevel]/2) && !self.difficultyLevelWasIncremented) {
-        self.skateboardCreationRate = self.skateboardCreationRate - skateboardCreationIncrementor;
+    if ((self.collectedStars > [self.gameData getBoardRequirementForCurrentLevel:self.currentLevel]/2) && !self.difficultyLevelWasIncremented) {
+        self.starCreationRate = self.starCreationRate - starCreationIncrementor;
         self.difficultyLevelWasIncremented = YES;
     }
 }
 
-- (BOOL)checkForCollision: (SkateBoardView *)skateBoardView //check if player "caught" a skateboard
+- (BOOL)checkForCollision: (StarView *)starView //check if player "caught" a star
 {
-    CGRect view1 = skateBoardView.frame;
+    CGRect view1 = starView.frame;
     CGRect view2 = self.playerView.frame;
     CGRect intersection = CGRectIntersection(view1, view2);
     if(!CGRectIsNull(intersection)) {
-        [skateBoardView removeFromSuperview];
+        [starView removeFromSuperview];
         [self incrementBoardDropRateAtEndOfLevel];
-        [self catchBoard];
+        [self catchStar];
         return YES;
     }
     
     return NO;
 }
 
-- (void)animationBlockCompleted: (SkateBoardView *)skateboardView //a given skateboard view is done animating
+- (void)animationBlockCompleted: (StarView *)starView //a given star view is done animating
 {
-    [skateboardView removeFromSuperview];
-    self.missedBoards ++;
-    [self updateMissedBoardsLabel];
+    [starView removeFromSuperview];
+    self.missedStars ++;
+    [self updateMissedStarsView];
 }
 
-#define HORIZONTAL_DISTANCE_BETWEEN_CREATED_BOARDS 200
-- (float)generateRandomXCoordinateForSkateBoard //create random drop location for skateboard
-{
-    int viewSize = [[NSNumber numberWithFloat:self.view.bounds.size.height] intValue];
-    int randomIntWithinWidth = arc4random() % viewSize;
-    float chosenValue = [[NSNumber numberWithInt: randomIntWithinWidth] floatValue];
-    
-    if ((chosenValue > self.lastXCoordinateChosen - HORIZONTAL_DISTANCE_BETWEEN_CREATED_BOARDS) && (chosenValue < self.lastXCoordinateChosen + HORIZONTAL_DISTANCE_BETWEEN_CREATED_BOARDS)) {
-        chosenValue = [self generateRandomXCoordinateForSkateBoard];
-    } else self.lastXCoordinateChosen = chosenValue;
-    
-    return chosenValue;
-}
 
-- (void)createSkateBoard
+- (void)starWasCreated:(StarView *)imageView
 {
-    int imageIndexIdentifier = arc4random() % [self.skateBoardImages count];
-    UIImage *skateBoardImage = [self.skateBoardImages objectAtIndex:imageIndexIdentifier];
-    
-    float skateBoardImageWidth = skateBoardImage.size.width;
-    float rightLimit = self.view.bounds.size.height - skateBoardImageWidth;
-    float leftLimit = skateBoardImageWidth;
-    float x = [self generateRandomXCoordinateForSkateBoard];
-    
-    if (x > rightLimit)     x = rightLimit + (skateBoardImageWidth/2);
-        else if   (x < leftLimit)   x = leftLimit + (skateBoardImageWidth/2);
-    
-    SkateBoardView *imageView = [[SkateBoardView alloc]init];
-    imageView.image = skateBoardImage;
-    imageView.frame = CGRectMake(x, 0, imageView.image.size.width, imageView.image.size.height);
-    imageView.animationCounter = 0;
-    imageView.imageIndexIdentifier = imageIndexIdentifier;
-    
     [self.mainBackgroundView addSubview:imageView];
-    
-    [self.skateboardView skateBoardAnimation:imageView animationDuration:[self getRateOfSkateBoardFallForCurrentLevel:self.currentLevel]];
- 
-     
+    [self.starView starAnimation:imageView animationDuration:[self getRateOfSkateBoardFallForCurrentLevel:self.currentLevel]];
 }
+    
 
--(void)dropBoard:(NSTimer *)timer
+-(void)dropStar:(NSTimer *)timer
 {
     if (!self.gameOver) {
-    [self createSkateBoard]; 
+        [self.starView createStar:self.view.bounds.size.height];
     }
 }
 
 - (void)dropTimer
 {
-    self.skateboardCreationRate = [self getRateOfSkateBoardCreationForCurrentLevel:self.currentLevel];
-    self.skateBoardDropTimer = [NSTimer scheduledTimerWithTimeInterval:self.skateboardCreationRate
+    self.starCreationRate = [self getRateOfSkateBoardCreationForCurrentLevel:self.currentLevel];
+    self.starDropTimer = [NSTimer scheduledTimerWithTimeInterval:self.starCreationRate
                                                          target:self
-                                                       selector:@selector(dropBoard:)
+                                                       selector:@selector(dropStar:)
                                                        userInfo:nil
                                                         repeats:YES];
 }
 
-- (void)prepareToDropSkateBoard
+- (void)prepareToDropStar
 {
     if ([self view]) [self performSelector:@selector(dropTimer) withObject:nil afterDelay:0];
 }
@@ -514,66 +601,83 @@
 - (IBAction)resumeButton:(id)sender {
     
     self.pauseView.hidden = YES; //always remove the pause view from the screen
-    
-    if (self.playAgainButton.isHidden) { //if the play again button is not visible, do regular resume activities
-    [self prepareToDropSkateBoard];
+    self.pauseButton.hidden = NO;
+    [self prepareToDropStar];
     [self checkTimersAndAccelerometerState];
     NSArray *newViews = [self retrieveViewsFromPausedState:self.viewsToBeReAnimated];
-    for (SkateBoardView *view in newViews) {
-        [self.skateboardView skateBoardAnimation:view animationDuration:[self getRateOfSkateBoardFallForCurrentLevel:self.currentLevel]];
-    }
+    for (StarView *view in newViews) {
+        [self.starView starAnimation:view animationDuration:[self getRateOfSkateBoardFallForCurrentLevel:self.currentLevel]];
     [self.viewsToBeReAnimated removeAllObjects];
     }
-
 }
 
 - (IBAction)pauseButton:(UIButton *)sender {
-    if (self.playAgainButton.isHidden) { //if the play again button is hidden, do pause action, otherwise do nothing
+    self.pauseButton.hidden = YES;
     self.pauseView.hidden = NO;
-    [self.skateBoardDropTimer invalidate];
-    self.viewsToBeReAnimated = [[self.skateboardView retrieveCurrentSkateBoardViews]mutableCopy];
-    [self.skateboardView.skateBoardsInAnimation removeAllObjects]; 
-        for (SkateBoardView *view in self.viewsToBeReAnimated) {
+    [self.starDropTimer invalidate];
+    self.viewsToBeReAnimated = [[self.starView retrieveCurrentStarViews]mutableCopy];
+    [self.starView.starsInAnimation removeAllObjects];
+        for (StarView *view in self.viewsToBeReAnimated) {
         view.wasPaused = YES;
         [view removeFromSuperview];
     }
-    }
 }
 
-- (IBAction)playAgainButton:(UIButton *)sender {
+- (void)playAgainButton:(UIButton *)sender {
     if (!self.pauseView.isHidden)  self.pauseView.hidden = YES; //if the pause view is visible, dismiss it when we press play again
     
     [self checkTimersAndAccelerometerState];
-    [self.skateboardView.skateBoardsInAnimation removeAllObjects];
+    [self.starView.starsInAnimation removeAllObjects];
     self.difficultyLevelWasIncremented = NO;
     
     int nextLevel;
     if (self.startAllOver) {
+    NSLog(@"FROM PLAY AGAIN BUTTON: START ALL OVER IS TRUE");
     nextLevel = 1;
-    [self.playAgainButton setTitle:@"Play Again?" forState:UIControlStateNormal];
     self.startAllOver = NO;
+        [self.wonEntireGameView removeFromSuperview];
+        [self.playAgainFromBeginningButton removeFromSuperview];
+    
     }   else {
-        nextLevel = [self.gameData determineNextGameLevel:[self.gameData checkIfLevelWon:self.collectedBoards forLevel:self.currentLevel] currentGameLevel:self.currentLevel];
+        nextLevel = [self.gameData determineNextGameLevel:[self.gameData checkIfLevelWon:self.collectedStars forLevel:self.currentLevel] currentGameLevel:self.currentLevel];
         }
 
-    self.playAgainButton.hidden = YES;
     [self.gameLevelLabel removeFromSuperview];
-    [self.missedBoardsLabel removeFromSuperview];
-    [self.leftView removeFromSuperview];
-    [self.centerView removeFromSuperview];
-    [self.rightView removeFromSuperview];
-    for (SkateBoardView *view in self.skateBoardsInPlayerArms) {
+    [self.leftViewForMissedStar removeFromSuperview];
+    [self.centerViewForMissedStar removeFromSuperview];
+    [self.rightViewForMissedStar removeFromSuperview];
+    
+    self.leftView.image = nil;
+    self.centerView.image = nil;
+    self.rightView.image = nil;
+    
+    for (StarView *view in self.starsInPlayerArms) {
         [view removeFromSuperview];
     }
+    
     self.gameLevelLabel = [self createGameLevelLabel:[NSString stringWithFormat:@"Level %i", nextLevel]];
-    [self.view addSubview:self.gameLevelLabel];
-    self.missedBoardsLabel = [self createMissedBoardsLabel];
-    [self.view addSubview:self.missedBoardsLabel];
+    //[self.view addSubview:self.gameLevelLabel];
+    [self createMissedStarsViews];
+        
     self.currentLevel = nextLevel;
     self.gameOver = NO;
-    self.collectedBoards = 0;
-    [self prepareToDropSkateBoard];
+    self.collectedStars = 0;
+    [self prepareToDropStar];
     self.pauseButton.hidden = NO;
+    self.resumeButton.hidden = NO;
+    
+    if ([self.view.subviews containsObject:self.youLostView]) {
+        NSLog(@"FROM PLAY AGAIN BUTTON: YOU LOST IS TRUE");
+        [self.youLostView removeFromSuperview];
+        [self.tryAgainButton removeFromSuperview];
+    }
+    
+    if ([self.view.subviews containsObject:self.nextLevelView]) {
+        NSLog(@"FROM PLAY AGAIN BUTTON: YOU WON IS TRUE");
+        [self.nextLevelView removeFromSuperview];
+        [self.continueButton removeFromSuperview];
+    }
+    
 }
 
 #pragma mark - view controller life cycle
@@ -583,18 +687,16 @@
     self.stopAccelerometerUpdatesWasCalled = YES;
     [self.runTimer invalidate];
     self.stopRunTimerWasCalled = YES;
-    [self.skateBoardDropTimer invalidate];
+    [self.starDropTimer invalidate];
     
     if (!self.pauseButton.isHidden) {
-        self.viewsToBeReAnimated = [[self.skateboardView retrieveCurrentSkateBoardViews]mutableCopy];
-        [self.skateboardView.skateBoardsInAnimation removeAllObjects];
-        for (SkateBoardView *view in self.viewsToBeReAnimated) {
+        self.viewsToBeReAnimated = [[self.starView retrieveCurrentStarViews]mutableCopy];
+        [self.starView.starsInAnimation removeAllObjects];
+        for (StarView *view in self.viewsToBeReAnimated) {
             view.wasPaused = YES;
             [view removeFromSuperview];
         }
     }
-    
-    if (self.playAgainButton.isHidden)  self.pauseView.hidden = NO;
 }
 
 
@@ -606,25 +708,22 @@
     self.navigationController.navigationBar.hidden = YES;
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
     self.pauseView.hidden = YES;
-    [self.playAgainButton setTitle:@"Play Again?" forState:UIControlStateNormal];
-    self.playAgainButton.hidden = YES;
     //class instances
     self.gameData = [[GameData alloc]init];
-    self.skateboardView = [[SkateBoardView alloc]init];
-    self.skateboardView.delegate = self;
+    self.starView = [[StarView alloc]init];
+    self.starView.delegate = self;
     //prepare arrays
     [self prepareRunSequenceArrays];
-    self.skateBoardImages = [self.skateboardView prepareSkateBoardImageArray];
-    self.animationDistance = [self.skateboardView makeTransformDictionaries:self.view.bounds.size.height];
-    self.rateOfSkateBoardCreationPerLevel = [GameData getDictionaryForRateOfSkateBoardCreation];
-    self.rateOfSkateBoardDropPerLevel = [GameData getDictionaryForRateOfSkateBoardFall];
-    //labels
-    self.gameLevelLabel = [self createGameLevelLabel:[NSString stringWithFormat:@"Level %i", self.currentLevel]];
+    self.starImages = [self.starView prepareStarsImageArray];
+    self.animationDistance = [self.starView makeTransformDictionaries:self.view.bounds.size.height];
+    self.rateOfStarCreationPerLevel = [GameData getDictionaryForRateOfSkateBoardCreation];
+    self.rateOfStarDropPerLevel = [GameData getDictionaryForRateOfSkateBoardFall];
+    //update labels & views
+    //self.gameLevelLabel = [self createGameLevelLabel:[NSString stringWithFormat:@"Level %i", self.currentLevel]];
     [self.view addSubview:self.gameLevelLabel];
-    self.missedBoardsLabel = [self createMissedBoardsLabel];
-    [self.view addSubview:self.missedBoardsLabel];
-    //begin skateboard animation
-    [self prepareToDropSkateBoard];
+    [self createMissedStarsViews];
+    //begin star animation
+    [self prepareToDropStar];
     [self startPlayerMotionUsingAccelerometer];
     //add listener for application enters background
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appEnteredBackground) name:@"AppDidCloseNotification" object:nil];
@@ -640,15 +739,12 @@
 {
     [super didReceiveMemoryWarning];
     self.playerBody = nil;
-    self.treeTopView = nil;
     self.playerArm = nil;
     self.playerView = nil;
     self.pauseButton = nil;
     self.scoreSignView = nil;
     self.scoreBoard = nil;
-    self.missedBoardsLabel = nil;
     self.gameLevelLabel = nil;
-    self.playAgainButton = nil;
     self.pauseView = nil;
     self.mainBackgroundView = nil;
 }
