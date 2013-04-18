@@ -11,7 +11,6 @@
 #import <CoreMotion/CoreMotion.h>
 #import "StarView.h"
 #import "CMMotionManager+SharedInstance.h"
-#import "DataController.h"
 
 @interface GamePlayViewController () <StarAnimation>
 
@@ -59,12 +58,14 @@
 @property (strong, nonatomic) UIImageView *leftViewForMissedStar;
 @property (strong, nonatomic) UIImageView *centerViewForMissedStar;
 @property (strong, nonatomic) UIImageView *rightViewForMissedStar;
+@property (strong, nonatomic) UIImageView *levelImageViewForMainView;
+@property (strong, nonatomic) UIImageView *leftLevelDigitImageViewForMainView;
+@property (strong, nonatomic) UIImageView *rightLevelDigitImageViewForMainView;
+@property (strong, nonatomic) UIImageView *singleDigitImageViewForMainView;
 
 @property (strong, nonatomic) UIView *youLostView;
 @property (strong, nonatomic) UIView *nextLevelView;
 @property (strong, nonatomic) UIView *wonEntireGameView;
-
-@property (weak, nonatomic) UILabel *gameLevelLabel;
 
 @property (nonatomic) int runSequenceCounter;
 @property (nonatomic) int collectedStars;
@@ -72,6 +73,7 @@
 @property (nonatomic) int currentLevel;
 @property (nonatomic) float animationDistance;
 @property (nonatomic) float starCreationRate;
+@property (nonatomic) int nextLevel;
 
 @end
 
@@ -124,21 +126,51 @@
     return [[self.rateOfStarDropPerLevel objectForKey:[NSString stringWithFormat:@"%i", currentLevel]] floatValue];
 }
 
-#pragma mark - create labels
+#pragma mark - create views
 
-#define GameLevelLabel_x 840
-#define GameLevelLabel_y 605
-#define GameLevelLabel_width 350
-#define GameLevelLabel_Height 64
-
--(UILabel *)createGameLevelLabel:(NSString*)gameLevel
+-(void)createLevelLabelForMainView:(int)gameLevel
 {
-    CGRect frame = CGRectMake(GameLevelLabel_x, GameLevelLabel_y, GameLevelLabel_width, GameLevelLabel_Height); 
-    UILabel *label = [[UILabel alloc]initWithFrame:frame];
-    [label setBackgroundColor:[UIColor clearColor]];
-    label.textColor = [UIColor whiteColor];
-    label.text = gameLevel;
-    return label;
+    UIImage *levelImage = [UIImage imageNamed:@"level_text"];
+    CGFloat levelWidth = levelImage.size.width/2;
+    CGFloat levelHeight = levelImage.size.height/2;
+    CGFloat levelx = 50;
+    CGFloat levely = 170;
+    UIImageView *levelImageView = [[UIImageView alloc]initWithFrame:CGRectMake(levelx, levely, levelWidth, levelHeight)];
+    levelImageView.image = levelImage;
+    self.levelImageViewForMainView = levelImageView;
+    [self.scoreSignView addSubview:self.levelImageViewForMainView];
+    
+    if (gameLevel < 10) {
+    UIImage *digitImage = [UIImage imageNamed:[NSString stringWithFormat:@"digit%i",gameLevel]];
+    CGFloat digitWidth = digitImage.size.width/2;
+    CGFloat digitHeight = digitImage.size.height/2;
+    CGFloat digitx = levelx + levelWidth/2 + 15;
+    CGFloat digity = 160;
+    UIImageView *digitImageView = [[UIImageView alloc]initWithFrame:CGRectMake(digitx, digity, digitWidth, digitHeight)];
+    digitImageView.image = digitImage;
+    self.singleDigitImageViewForMainView = digitImageView;
+    [self.scoreSignView addSubview:self.singleDigitImageViewForMainView];
+    } else {
+        UIImage *digitLeftImage = [UIImage imageNamed:@"digit1"];
+        CGFloat digitLeftWidth = digitLeftImage.size.width/2;
+        CGFloat digitLeftHeight = digitLeftImage.size.height/2;
+        CGFloat digitLeftx = levelx + levelWidth/2 + 15;
+        CGFloat digitLefty = 160;
+        UIImageView *digitLeftImageView = [[UIImageView alloc]initWithFrame:CGRectMake(digitLeftx, digitLefty, digitLeftWidth, digitLeftHeight)];
+        digitLeftImageView.image = digitLeftImage;
+        self.leftLevelDigitImageViewForMainView = digitLeftImageView;
+        [self.scoreSignView addSubview:self.leftLevelDigitImageViewForMainView];
+        
+        UIImage *digitRightImage = [UIImage imageNamed:@"digit0"];
+        CGFloat digitRightWidth = digitRightImage.size.width/2;
+        CGFloat digitRightHeight = digitRightImage.size.height/2;
+        CGFloat digitRightx = digitLeftx + digitLeftWidth/2 - 3;
+        CGFloat digitRighty = 155;
+        UIImageView *digitRightImageView = [[UIImageView alloc]initWithFrame:CGRectMake(digitRightx, digitRighty, digitRightWidth, digitRightHeight)];
+        digitRightImageView.image = digitRightImage;
+        self.rightLevelDigitImageViewForMainView = digitRightImageView;
+        [self.scoreSignView addSubview:self.rightLevelDigitImageViewForMainView];
+    }
 }
 
 -(void)createMissedStarsViews
@@ -164,7 +196,6 @@
 -(UIButton *)createTryAgainButton
 {
     UIImage *buttonImage = [UIImage imageNamed:@"tryAgainButton"];
-    
     CGFloat x = self.view.frame.size.width/2 - buttonImage.size.width/2;
     CGFloat y = self.view.frame.size.height *2/3;
     CGRect buttonFrame = CGRectMake(x, y, buttonImage.size.width, buttonImage.size.height);
@@ -178,7 +209,6 @@
 -(UIButton *)createContinueButton
 {
     UIImage *buttonImage = [UIImage imageNamed:@"continueButton"];
-    
     CGFloat x = self.view.frame.size.width/2 - buttonImage.size.width/2;
     CGFloat y = self.view.frame.size.height *2/3;
     CGRect buttonFrame = CGRectMake(x, y, buttonImage.size.width, buttonImage.size.height);
@@ -192,7 +222,6 @@
 -(UIButton *)createPlayAgainButton
 {
     UIImage *buttonImage = [UIImage imageNamed:@"playAgainButton"];
-    
     CGFloat x = self.view.frame.size.width/2 - buttonImage.size.width/2;
     CGFloat y = self.view.frame.size.height *2/3;
     CGRect buttonFrame = CGRectMake(x, y, buttonImage.size.width, buttonImage.size.height);
@@ -207,26 +236,56 @@
 -(UIView *)createYouLostView
 {
     UIView *youLostView = [[UIView alloc]initWithFrame:self.view.frame];
-    
-    UIImage *lostImage = [UIImage imageNamed:@"youLostView"];
-    UIImageView *imageView = [[UIImageView alloc]initWithImage:lostImage];
+    UIImage *lostImage = [UIImage imageNamed:@"lose"];
+    CGFloat width = lostImage.size.width/2;
+    CGFloat height = lostImage.size.height/2;
+    UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, width, height)];
+    imageView.image = lostImage;
     imageView.center = self.view.center;
-    
     [youLostView addSubview:imageView];    
-    
     return youLostView;
 }
 
--(UIView *)createNextLevelView
+-(UIView *)createNextLevelView:(int)gameLevel
 {
     UIView *nextLevelView = [[UIView alloc]initWithFrame:self.view.frame];
     UIImage *nextLevelImage = [UIImage imageNamed:@"nextLevelView"];
-    UIImageView *imageView = [[UIImageView alloc]initWithImage:nextLevelImage];
-    imageView.center = self.view.center;
+    UIImageView *mainImageView = [[UIImageView alloc]initWithImage:nextLevelImage];
+    mainImageView.center = self.view.center;
     
-    [nextLevelView addSubview:imageView];
+    [nextLevelView addSubview:mainImageView];
     
-    //ADD IN STAR LABEL TO SHOW THE CURRENT LEVEL
+    UIImage *singleDigit = [UIImage imageNamed:[NSString stringWithFormat:@"sdigit%i", gameLevel]];
+    UIImage *firstDigit = [UIImage imageNamed:@"sdigit1"];
+    UIImage *secondDigit = [UIImage imageNamed:@"sdigit0"];
+    
+    CGFloat x = self.view.frame.size.width * 2/3 - 43;
+    CGFloat y = self.view.frame.size.height/3 + 85;
+  
+    if (gameLevel < 10) {
+        CGFloat width = singleDigit.size.width/2;
+        CGFloat height = singleDigit.size.height/2;
+        CGPoint imageCenter = CGPointMake(x, y);
+        CGRect frame = CGRectMake(x, y, width, height);
+        UIImageView *singleDigitLevel = [[UIImageView alloc]initWithFrame:frame];
+        singleDigitLevel.image = singleDigit;
+        singleDigitLevel.center = imageCenter;
+        [nextLevelView addSubview:singleDigitLevel];
+    
+    }  else {
+        CGFloat width = firstDigit.size.width/2;
+        CGFloat height = firstDigit.size.height/2;
+        CGFloat xForLeftView = self.view.frame.size.width * 2/3 - 90;
+        CGFloat xForRightView = xForLeftView + firstDigit.size.width/4;
+        CGRect frameLeftView = CGRectMake(xForLeftView, y-33, width, height);
+        CGRect rightLeftView = CGRectMake(xForRightView, y-33, width, height);
+        UIImageView *leftView = [[UIImageView alloc]initWithFrame:frameLeftView];
+        UIImageView *rightView = [[UIImageView alloc]initWithFrame:rightLeftView];
+        leftView.image = firstDigit;
+        rightView.image = secondDigit;
+        [nextLevelView addSubview:leftView];
+        [nextLevelView addSubview:rightView];
+    }
     
     return nextLevelView;
 }
@@ -293,7 +352,6 @@
 - (NSArray *)retrieveViewsFromPausedState:(NSArray *)viewArray
 {
     NSMutableArray *newViews = [[NSMutableArray alloc]init];
-    
     for (StarView *view in viewArray) {
         float newXPosition = view.lastKnownLocation.x;
         float newYPosition = view.lastKnownLocation.y;
@@ -322,13 +380,11 @@
     }   else if (self.missedBoards == 2) {
             self.centerViewForMissedStar.image = image;
         }   else if (self.missedBoards == 3) {
-            NSLog(@"FROM UPDATE MISSED STARS: GAME LOST");
                 self.rightViewForMissedStar.image = image;
                 self.gameOver = YES;
                 self.levelPassed = NO;
                 [self gameEnded];
             }   
-
 }
 
 - (void)prepareSceneWhenGameEnds {
@@ -337,15 +393,13 @@
         [self.view addSubview:self.youLostView];
         self.tryAgainButton = [self createTryAgainButton];
         [self.view addSubview:self.tryAgainButton];
-        NSLog(@"FROM GAME ENDED: LEVEL LOST");
     } else if (self.levelPassed && !self.startAllOver) {
-        self.nextLevelView = [self createNextLevelView];
+        self.nextLevel = [self.gameData determineNextGameLevel:[self.gameData checkIfLevelWon:self.collectedStars forLevel:self.currentLevel] currentGameLevel:self.currentLevel];
+        self.nextLevelView = [self createNextLevelView:self.nextLevel];
         [self.view addSubview:self.nextLevelView];
         self.continueButton = [self createContinueButton];
         [self.view addSubview:self.continueButton];
-        NSLog(@"FROM GAME ENDED: LEVEL PASSED");
     }  else if (self.startAllOver) {
-        NSLog(@"FROM GAME ENDED: START ALL OVER");
         self.wonEntireGameView = [self createWonEntireGameView];
         [self.view addSubview:self.self.wonEntireGameView];
         self.playAgainFromBeginningButton = [self createPlayAgainButton];
@@ -364,14 +418,14 @@
      self.resumeButton.hidden = YES;
     
      self.missedStars = 0;
-    
     [self performSelector:@selector(prepareSceneWhenGameEnds) withObject:nil afterDelay:0.3];
 }
 
 - (UIImageView *)createScoreDigitView:(NSString *)scoreString characterIndex:(int)index xOffset:(float)x yOffSet:(float)y
 {
     NSString *stringDigit = [NSString stringWithFormat:@"%c",[scoreString characterAtIndex:index]];
-    UIImage *imageForDigit = [UIImage imageNamed:stringDigit];
+    NSString *digitImageName = [NSString stringWithFormat:@"digit%@",stringDigit];
+    UIImage *imageForDigit = [UIImage imageNamed:digitImageName];
     CGRect imageViewFrame = CGRectMake(self.scoreBoard.frame.size.width - x, self.scoreBoard.frame.size.height - y, imageForDigit.size.width, imageForDigit.size.height);
     UIImageView *imageView = [[UIImageView alloc]initWithFrame:imageViewFrame];
     imageView.image = imageForDigit;
@@ -380,7 +434,6 @@
 
 - (void)postCurrentScore:(int)currentScore
 {
-    currentScore = 99;
     NSString *scoreString = [NSString stringWithFormat:@"%i", currentScore];
     int scoreStringLength = [scoreString length];
     [self.leftView removeFromSuperview];
@@ -388,24 +441,24 @@
     [self.rightView removeFromSuperview];
 
     if (scoreStringLength == 1) {
-        self.centerView = [self createScoreDigitView:scoreString characterIndex:0 xOffset:200 yOffSet:100];
+        self.centerView = [self createScoreDigitView:scoreString characterIndex:0 xOffset:192 yOffSet:92];
         [self.scoreSignView addSubview:self.centerView];
     }   else if (scoreStringLength == 2) {
         //first digit
          self.leftView = [self createScoreDigitView:scoreString characterIndex:0 xOffset:205 yOffSet:90];
          [self.scoreSignView addSubview:self.leftView];
         //second digit
-        self.rightView = [self createScoreDigitView:scoreString characterIndex:1 xOffset:190 yOffSet:100];
+        self.rightView = [self createScoreDigitView:scoreString characterIndex:1 xOffset:185 yOffSet:102];
         [self.scoreSignView addSubview:self.rightView];
         }   else if (scoreStringLength == 3) {
             //first digit
-            self.leftView = [self createScoreDigitView:scoreString characterIndex:0 xOffset:218 yOffSet:85];
+            self.leftView = [self createScoreDigitView:scoreString characterIndex:0 xOffset:218 yOffSet:80];
             [self.scoreSignView addSubview:self.leftView];
             //second digit
-            self.centerView = [self createScoreDigitView:scoreString characterIndex:1 xOffset:203 yOffSet:95];
+            self.centerView = [self createScoreDigitView:scoreString characterIndex:1 xOffset:203 yOffSet:90];
             [self.scoreSignView addSubview:self.centerView];
             //third digit
-            self.rightView = [self createScoreDigitView:scoreString characterIndex:2 xOffset:183 yOffSet:109];
+            self.rightView = [self createScoreDigitView:scoreString characterIndex:2 xOffset:183 yOffSet:105];
             [self.scoreSignView addSubview:self.rightView];
             }
 }
@@ -456,7 +509,6 @@
         }
         
         [self gameEnded];
-        NSLog(@"FROM CATCH STAR METHOD: LEVEL WON");
     } 
     
     [self.starsInPlayerArms addObject:view];
@@ -600,7 +652,7 @@
 #pragma mark - buttons
 - (IBAction)resumeButton:(id)sender {
     
-    self.pauseView.hidden = YES; //always remove the pause view from the screen
+    self.pauseView.hidden = YES; 
     self.pauseButton.hidden = NO;
     [self prepareToDropStar];
     [self checkTimersAndAccelerometerState];
@@ -624,25 +676,25 @@
 }
 
 - (void)playAgainButton:(UIButton *)sender {
-    if (!self.pauseView.isHidden)  self.pauseView.hidden = YES; //if the pause view is visible, dismiss it when we press play again
-    
+    if (!self.pauseView.isHidden)  self.pauseView.hidden = YES;     
     [self checkTimersAndAccelerometerState];
     [self.starView.starsInAnimation removeAllObjects];
     self.difficultyLevelWasIncremented = NO;
     
-    int nextLevel;
     if (self.startAllOver) {
-    NSLog(@"FROM PLAY AGAIN BUTTON: START ALL OVER IS TRUE");
-    nextLevel = 1;
+    self.nextLevel = 1;
     self.startAllOver = NO;
         [self.wonEntireGameView removeFromSuperview];
         [self.playAgainFromBeginningButton removeFromSuperview];
     
     }   else {
-        nextLevel = [self.gameData determineNextGameLevel:[self.gameData checkIfLevelWon:self.collectedStars forLevel:self.currentLevel] currentGameLevel:self.currentLevel];
+        self.nextLevel = [self.gameData determineNextGameLevel:[self.gameData checkIfLevelWon:self.collectedStars forLevel:self.currentLevel] currentGameLevel:self.currentLevel];
         }
-
-    [self.gameLevelLabel removeFromSuperview];
+    
+    [self.leftLevelDigitImageViewForMainView removeFromSuperview];
+    [self.rightLevelDigitImageViewForMainView removeFromSuperview];
+    [self.levelImageViewForMainView removeFromSuperview];
+    [self.singleDigitImageViewForMainView removeFromSuperview];
     [self.leftViewForMissedStar removeFromSuperview];
     [self.centerViewForMissedStar removeFromSuperview];
     [self.rightViewForMissedStar removeFromSuperview];
@@ -654,12 +706,11 @@
     for (StarView *view in self.starsInPlayerArms) {
         [view removeFromSuperview];
     }
-    
-    self.gameLevelLabel = [self createGameLevelLabel:[NSString stringWithFormat:@"Level %i", nextLevel]];
-    //[self.view addSubview:self.gameLevelLabel];
+  
     [self createMissedStarsViews];
         
-    self.currentLevel = nextLevel;
+    self.currentLevel = self.nextLevel;
+    [self createLevelLabelForMainView:self.currentLevel];
     self.gameOver = NO;
     self.collectedStars = 0;
     [self prepareToDropStar];
@@ -667,13 +718,11 @@
     self.resumeButton.hidden = NO;
     
     if ([self.view.subviews containsObject:self.youLostView]) {
-        NSLog(@"FROM PLAY AGAIN BUTTON: YOU LOST IS TRUE");
         [self.youLostView removeFromSuperview];
         [self.tryAgainButton removeFromSuperview];
     }
     
     if ([self.view.subviews containsObject:self.nextLevelView]) {
-        NSLog(@"FROM PLAY AGAIN BUTTON: YOU WON IS TRUE");
         [self.nextLevelView removeFromSuperview];
         [self.continueButton removeFromSuperview];
     }
@@ -719,8 +768,7 @@
     self.rateOfStarCreationPerLevel = [GameData getDictionaryForRateOfSkateBoardCreation];
     self.rateOfStarDropPerLevel = [GameData getDictionaryForRateOfSkateBoardFall];
     //update labels & views
-    //self.gameLevelLabel = [self createGameLevelLabel:[NSString stringWithFormat:@"Level %i", self.currentLevel]];
-    [self.view addSubview:self.gameLevelLabel];
+    [self createLevelLabelForMainView:self.currentLevel];
     [self createMissedStarsViews];
     //begin star animation
     [self prepareToDropStar];
@@ -744,7 +792,6 @@
     self.pauseButton = nil;
     self.scoreSignView = nil;
     self.scoreBoard = nil;
-    self.gameLevelLabel = nil;
     self.pauseView = nil;
     self.mainBackgroundView = nil;
 }

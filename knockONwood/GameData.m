@@ -6,7 +6,6 @@
 //
 
 #import "GameData.h"
-#import "DataController.h"
 
 @interface GameData()
 
@@ -32,7 +31,7 @@
 + (NSDictionary *)getBoardRequirementsForEachLevel
 {
     NSArray *levels = [[NSArray alloc]initWithObjects:@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9", @"10", nil];
-    NSArray *boardAmounts = [[NSArray alloc]initWithObjects:@"5",@"5",@"5",@"5",@"5",@"5",@"5",@"5",@"5",@"5",nil];
+    NSArray *boardAmounts = [[NSArray alloc]initWithObjects:@"10",@"15",@"20",@"25",@"30",@"35",@"40",@"45",@"50",@"55",nil];
     NSDictionary *boardsForEachLevel = [[NSDictionary alloc]initWithObjects:boardAmounts forKeys:levels];
     return boardsForEachLevel;
 }

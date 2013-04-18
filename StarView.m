@@ -5,7 +5,6 @@
 //
 
 #import "StarView.h"
-#import "DataController.h"
 
 @interface StarView()
 

@@ -8,6 +8,21 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>icon_72x72.png</string>
+				<string>icon_144x144.png</string>
+				<string>icon_29x29.png</string>
+				<string>icon_57X57.png</string>
+				<string>icon_114x114.png</string>
+				<string>icon_1024x1024.png</string>
+			</array>
+		</dict>
+	</dict>
 	<key>CFBundleIdentifier</key>
 	<string>Clark.Jennifer.twinkle</string>
 	<key>CFBundleInfoDictionaryVersion</key>
