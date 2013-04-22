@@ -175,7 +175,7 @@
 
 -(void)createMissedStarsViews
 {
-    CGFloat y = 660;
+    CGFloat y = 682;
     CGFloat x = 390;
     
     UIImage *image = [UIImage imageNamed:@"missedStar"];
@@ -190,6 +190,31 @@
     [self.view addSubview:self.leftViewForMissedStar];
     [self.view addSubview:self.centerViewForMissedStar];
     [self.view addSubview:self.rightViewForMissedStar];
+}
+
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if (!self.pauseButton.isHidden) {
+    [self pauseButton:self.pauseButton];
+    }
+}
+
+- (void)getGameInfo {
+    [self performSegueWithIdentifier:@"getInfoFromGameScreen" sender:self];
+}
+
+-(void)addInfoButton
+{
+    UIImage *image = [UIImage imageNamed:@"getGameInfoButton"];
+    CGFloat width = image.size.width/2;
+    CGFloat height = image.size.height/2;
+    CGFloat x = 42;
+    CGFloat y = 675;
+    UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(x, y, width, height)];
+    [button setImage:image forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(getGameInfo) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:button];
 }
 
 
@@ -739,6 +764,9 @@
     [self.starDropTimer invalidate];
     
     if (!self.pauseButton.isHidden) {
+        self.pauseView.hidden = NO;
+        self.pauseButton.hidden = YES;
+        self.resumeButton.hidden = NO;
         self.viewsToBeReAnimated = [[self.starView retrieveCurrentStarViews]mutableCopy];
         [self.starView.starsInAnimation removeAllObjects];
         for (StarView *view in self.viewsToBeReAnimated) {
@@ -770,6 +798,7 @@
     //update labels & views
     [self createLevelLabelForMainView:self.currentLevel];
     [self createMissedStarsViews];
+    [self addInfoButton];
     //begin star animation
     [self prepareToDropStar];
     [self startPlayerMotionUsingAccelerometer];

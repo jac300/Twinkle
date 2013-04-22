@@ -17,14 +17,14 @@
 				<string>icon_72x72.png</string>
 				<string>icon_144x144.png</string>
 				<string>icon_29x29.png</string>
-				<string>icon_57X57.png</string>
+				<string>icon_57x57.png</string>
 				<string>icon_114x114.png</string>
 				<string>icon_1024x1024.png</string>
 			</array>
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
-	<string>Clark.Jennifer.twinkle</string>
+	<string>Clark.Jennifer.StarNite</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

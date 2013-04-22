@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1AACF25016C99CEE00FA936D"
-               BuildableName = "twinkle.app"
-               BlueprintName = "twinkle"
-               ReferencedContainer = "container:twinkle.xcodeproj">
+               BuildableName = "StarNite.app"
+               BlueprintName = "StarNite"
+               ReferencedContainer = "container:StarNite.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1AACF25016C99CEE00FA936D"
-            BuildableName = "twinkle.app"
-            BlueprintName = "twinkle"
-            ReferencedContainer = "container:twinkle.xcodeproj">
+            BuildableName = "StarNite.app"
+            BlueprintName = "StarNite"
+            ReferencedContainer = "container:StarNite.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -52,9 +52,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1AACF25016C99CEE00FA936D"
-            BuildableName = "twinkle.app"
-            BlueprintName = "twinkle"
-            ReferencedContainer = "container:twinkle.xcodeproj">
+            BuildableName = "StarNite.app"
+            BlueprintName = "StarNite"
+            ReferencedContainer = "container:StarNite.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -70,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1AACF25016C99CEE00FA936D"
-            BuildableName = "twinkle.app"
-            BlueprintName = "twinkle"
-            ReferencedContainer = "container:twinkle.xcodeproj">
+            BuildableName = "StarNite.app"
+            BlueprintName = "StarNite"
+            ReferencedContainer = "container:StarNite.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

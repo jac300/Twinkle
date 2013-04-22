@@ -37,14 +37,14 @@
 
 #pragma mark - make star
 #define HORIZONTAL_DISTANCE_BETWEEN_CREATED_STARS 200
-- (float)generateRandomXCoordinateForSkateBoard: (float)viewHeight 
+- (float)generateRandomXCoordinateForStar: (float)viewHeight
 {
     int viewSize = [[NSNumber numberWithFloat:viewHeight] intValue];
     int randomIntWithinWidth = arc4random() % viewSize;
     float chosenValue = [[NSNumber numberWithInt: randomIntWithinWidth] floatValue];
     
     if ((chosenValue > self.lastXCoordinateChosen - HORIZONTAL_DISTANCE_BETWEEN_CREATED_STARS) && (chosenValue < self.lastXCoordinateChosen + HORIZONTAL_DISTANCE_BETWEEN_CREATED_STARS)) {
-        chosenValue = [self generateRandomXCoordinateForSkateBoard:viewHeight];
+        chosenValue = [self generateRandomXCoordinateForStar:viewHeight];
     } else self.lastXCoordinateChosen = chosenValue;
     
     return chosenValue;
@@ -59,7 +59,7 @@
     float rightLimit = viewHeight - starImageWidth;
     float leftLimit = starImageWidth;
 
-    float x = [self generateRandomXCoordinateForSkateBoard:viewHeight];
+    float x = [self generateRandomXCoordinateForStar:viewHeight];
     
     if (x > rightLimit)     x = rightLimit + (starImageWidth/2);
     else if   (x < leftLimit)   x = leftLimit + (starImageWidth/2);
@@ -162,7 +162,7 @@
     return yTransformValue;
 }
 
-+ (float)getRotationDegreeForSkateboardAnimation
++ (float)getRotationDegreeForStarAnimation
 {
     NSArray *array = [[NSArray alloc]initWithObjects:[NSNumber numberWithFloat:90], [NSNumber numberWithFloat:-90], nil];
     
@@ -192,7 +192,7 @@ CGFloat DegreesToRadians(CGFloat degrees)
         [self.starsInAnimation addObject:view];
          view.animationCounter = 1;
          view.numberOfTimesAnimated = 1;
-        if ([StarView getRotationDegreeForSkateboardAnimation] == -90) {
+        if ([StarView getRotationDegreeForStarAnimation] == -90) {
             view.rotationAngleIsNegative = YES;
         }   else view.rotationAngleIsNegative = NO;
     }
