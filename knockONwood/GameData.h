@@ -1,11 +1,3 @@
-//
-//  GameData.h
-//  knockONwood
-//
-//  Created by Jennifer Clark on 3/10/13.
-//  Copyright (c) 2013 Jennifer Clark. All rights reserved.
-//
-
 #import <Foundation/Foundation.h>
 
 @interface GameData : NSObject
