@@ -384,6 +384,12 @@
 			attributes = {
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "Jennifer Clark";
+				TargetAttributes = {
+					1AACF25016C99CEE00FA936D = {
+						DevelopmentTeam = K625858FBU;
+						ProvisioningStyle = Manual;
+					};
+				};
 			};
 			buildConfigurationList = 1AACF24C16C99CEE00FA936D /* Build configuration list for PBXProject "StarNite" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -528,8 +534,8 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Jennifer Clark (27GZVNGA24)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Jennifer Clark (27GZVNGA24)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Jen Clark (7999A3C4EG)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Jen Clark (7999A3C4EG)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -542,10 +548,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "BF077281-9817-4AB2-990C-A460A8C93075";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "BF077281-9817-4AB2-990C-A460A8C93075";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -563,17 +567,15 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Jennifer Clark";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Jennifer Clark";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Jennifer Clark (K625858FBU)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Jennifer Clark (K625858FBU)";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PROVISIONING_PROFILE = "8172D4A9-7820-4D06-9CC9-EDFDEBFFD7C0";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "8172D4A9-7820-4D06-9CC9-EDFDEBFFD7C0";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
@@ -583,10 +585,15 @@
 		1AACF27516C99CEE00FA936D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = K625858FBU;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "knockONwood/StarNite-Prefix.pch";
 				INFOPLIST_FILE = "knockONwood/StarNite-Info.plist";
 				PRODUCT_NAME = StarNite;
+				PROVISIONING_PROFILE = "7d58dd8d-13ff-4192-b6c0-9696437f2b00";
+				PROVISIONING_PROFILE_SPECIFIER = "Jennifer Clark Star Nite Dev";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -594,10 +601,15 @@
 		1AACF27616C99CEE00FA936D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Jennifer Clark (K625858FBU)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Jennifer Clark (K625858FBU)";
+				DEVELOPMENT_TEAM = K625858FBU;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "knockONwood/StarNite-Prefix.pch";
 				INFOPLIST_FILE = "knockONwood/StarNite-Info.plist";
 				PRODUCT_NAME = StarNite;
+				PROVISIONING_PROFILE = "0b05e6f6-27f4-4048-98c9-6b2370b07803";
+				PROVISIONING_PROFILE_SPECIFIER = "Jennifer Clark Star Nite";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
