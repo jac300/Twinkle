@@ -460,7 +460,7 @@
 - (void)postCurrentScore:(int)currentScore
 {
     NSString *scoreString = [NSString stringWithFormat:@"%i", currentScore];
-    int scoreStringLength = [scoreString length];
+    NSInteger scoreStringLength = [scoreString length];
     [self.leftView removeFromSuperview];
     [self.centerView removeFromSuperview];
     [self.rightView removeFromSuperview];
